@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EDR Alert Dashboard</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .anomaly { background-color: #ffcccc; }
+        #refresh-btn { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🔔 EDR Alert Dashboard</h1>
+    <button id="refresh-btn">🔄 Refresh</button>
+    <table id="alerts-table">
+        <thead>
+            <tr>
+                <th>Computer</th>
+                <th>Event Timestamp</th>
+                <th>MSE</th>
+                <th>Threshold</th>
+                <th>Detected At</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        async function fetchAlerts() {
+            const response = await fetch('/api/alerts');
+            const alerts = await response.json();
+            const tbody = document.querySelector('#alerts-table tbody');
+            tbody.innerHTML = '';
+            alerts.forEach(alert => {
+                const row = tbody.insertRow();
+                row.classList.add('anomaly');
+                row.insertCell().textContent = alert.computer;
+                row.insertCell().textContent = alert.timestamp;
+                row.insertCell().textContent = alert.mse.toFixed(6);
+                row.insertCell().textContent = alert.threshold.toFixed(6);
+                row.insertCell().textContent = new Date(alert.detected_at).toLocaleString();
+            });
+        }
+
+        document.getElementById('refresh-btn').addEventListener('click', fetchAlerts);
+        fetchAlerts();
+        setInterval(fetchAlerts, 10000); // refresh every 10 sec
+    </script>
+</body>
+</html>

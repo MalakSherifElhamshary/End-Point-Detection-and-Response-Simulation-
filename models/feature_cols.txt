@@ -1,0 +1,8 @@
+hour
+day_of_week
+minute
+source_encoded
+level_encoded
+msg_length
+word_count
+has_error
